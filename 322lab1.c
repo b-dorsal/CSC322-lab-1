@@ -34,6 +34,21 @@ void printArrData(int** roomlist, int** creaturelist){
 }
 //DEBUG --------------------------------------------
 
+//Print the help information.
+void printHelp(){
+	printf("\n\nInsructions:\nAll commands are one or two words. Two word commands are seperated by ':'.");
+	printf("Single word commands control the player, and two word commands control the creatures around you.\n");
+	printf("To move your player, type north, south, east, or west.");
+	printf("To move a creature, type the creatures id and the direction seperated by a ':'. ex name:n\n");
+	printf("To clean or dirty the current room, type \"clean\" or \"dirty\".");
+	printf("Or, to make a creature clean the current room, type it's name followed by \"clean\" or \"dirty\", seperated by a ':'\n");
+	printf("To look around your current room, and view its contents, type \"look\".");
+	printf("Or, to make a creature look around the current room, type it's name followed by \"look\", seperated by a ':'. \n");
+	printf("All commands are not case sensitive, creature names, however, are.\n");
+	printf("For help, type \"help\"");
+	printf("To quit, type \"quit\" or \"exit\".\n");
+}
+
 //Handle two-part commands------------------------
 //Checks to see if a command contains a split.
 int containsSplit(char string[256]){
@@ -92,6 +107,7 @@ int playerID(int** creaturelist){
 	return x;
 }
 
+//Displays the room's information of the user.
 void look(int actor, int** roomlist, int** creaturelist){
 	//Find the current room using the creature list.
 	int currRoom = creaturelist[actor][1];
@@ -188,7 +204,6 @@ int findGoodMove(int** roomlist, int currRoom){
 		if(dir > 4){
 			dir = 1;
 		}
-		printf("dir check: %d", dir);
 	}
 
 	return -1;
@@ -203,10 +218,11 @@ void escapeHouse(int creatureID, int** creaturelist, int** roomlist){
 	roomlist[currRoom][5] = roomlist[currRoom][5] - 1;
 	//creaturect--;
 
-	for(int x = 0; x < 5; x++){
+	for(int x = 0; x < 2; x++){
 		creaturelist[creatureID][x] = -1;
 	}
 
+	//Cause reaction from other creatures in room.
 	for(int x = 0; x < creaturect; x++){
 		if(creaturelist[x][0] != 0){
 			if(creaturelist[x][1] == currRoom){
@@ -324,9 +340,11 @@ void clean(int actor, int** roomlist, int** creaturelist){
 	}else if(roomlist[currRoom][0] == 1){
 		roomlist[currRoom][0] = 0;
 		causeReaction(actor, 0, roomlist, creaturelist, currRoom);
+		printf("Your respect is now %d\n", respect);
 	}else if(roomlist[currRoom][0] == 0){
 		//do nothing, already clean.
 	}
+	
 }
 
 //Dirty the room with the selected character.
@@ -337,9 +355,11 @@ void dirty(int actor, int** roomlist, int** creaturelist){
 	}else if(roomlist[currRoom][0] == 1){
 		roomlist[currRoom][0] = 2;
 		causeReaction(actor, 2, roomlist, creaturelist, currRoom);
+		printf("Your respect is now %d\n", respect);
 	}else if(roomlist[currRoom][0] == 2){
 		//do nothing, already dirty.
 	}
+
 }
 
 //Move the player in a direction.
@@ -391,12 +411,9 @@ int main(void){
 	int **roomlist;
 	int **creaturelist;
 
-	// //Get number of rooms
-	// printf("# of rooms: "); //n
-	// int roomct;
-	// scanf("%d", &roomct);
-
-	roomct = 1;
+	//Get number of rooms
+	printf("# of rooms: "); //n
+	scanf("%d", &roomct);
 
 	//Allocate memory for 2D room array
     roomlist = (int **)malloc(roomct * sizeof(int *));
@@ -404,75 +421,42 @@ int main(void){
     	roomlist[i] = (int *)malloc(6 * sizeof(int));
     }
 
-
-    roomlist[0][0] = 1;
-    roomlist[0][1] = -1;
-    roomlist[0][2] = -1;
-    roomlist[0][3] = -1;
-    roomlist[0][4] = -1;
-    roomlist[0][5] = 3;
-
-    // roomlist[0][0] = 1;
-    // roomlist[0][1] = 1;
-    // roomlist[0][2] = -1;
-    // roomlist[0][3] = -1;
-    // roomlist[0][4] = 2;
-    // roomlist[0][5] = 2;
-
-    // roomlist[1][0] = 2;
-    // roomlist[1][1] = -1;
-    // roomlist[1][2] = 0;
-    // roomlist[1][3] = -1;
-    // roomlist[1][4] = -1;
-    // roomlist[1][5] = 1;
-
-    // roomlist[2][0] = 0;
-    // roomlist[2][1] = -1;
-    // roomlist[2][2] = -1;
-    // roomlist[2][3] = 0;
-    // roomlist[2][4] = -1;
-    // roomlist[2][5] = 1;
-
-
    	//Collect initialization data using stdin
-	// for (int rm = 0 ; rm < roomct; rm++) {
+	for (int rm = 0 ; rm < roomct; rm++) {
 
-	// 	printf("ROOM#: %d\n", rm);
-	// 	printf("state: ");
-	// 	int state;
-	// 	scanf("%d", &state);
-	// 	roomlist[rm][0] = state;
+		printf("ROOM#: %d\n", rm);
+		printf("state: ");
+		int state;
+		scanf("%d", &state);
+		roomlist[rm][0] = state;
 
-	// 	printf("north: ");
-	// 	int north;
-	// 	scanf("%d", &north);
-	// 	roomlist[rm][1] = north;
+		printf("north: ");
+		int north;
+		scanf("%d", &north);
+		roomlist[rm][1] = north;
 
-	// 	printf("south: ");
-	// 	int south;
-	// 	scanf("%d", &south);
-	// 	roomlist[rm][2] = south;
+		printf("south: ");
+		int south;
+		scanf("%d", &south);
+		roomlist[rm][2] = south;
 
-	// 	printf("east: ");
-	// 	int east;
-	// 	scanf("%d", &east);
-	// 	roomlist[rm][3] = east;
+		printf("east: ");
+		int east;
+		scanf("%d", &east);
+		roomlist[rm][3] = east;
 
-	// 	printf("west: ");
-	// 	int west;
-	// 	scanf("%d", &west);
-	// 	roomlist[rm][4] = west;
+		printf("west: ");
+		int west;
+		scanf("%d", &west);
+		roomlist[rm][4] = west;
 
-	// 	//room occupancy
-	// 	roomlist[rm][5] = 0;
-	// }
+		//room occupancy
+		roomlist[rm][5] = 0;
+	}
 
-	// //Get number of creatures
-	// printf("# of creatures: "); //m
-	// int creaturect;
-	// scanf("%d", &creaturect);
-
-    creaturect = 3;
+	//Get number of creatures
+	printf("# of creatures: "); //m
+	scanf("%d", &creaturect);
 
 	//Allocate memory for 2D creature array
     creaturelist = (int **)malloc(creaturect * sizeof(int *));
@@ -480,54 +464,28 @@ int main(void){
     	creaturelist[i] = (int *)malloc(2 * sizeof(int));
     }
 
-    creaturelist[1][0] = 0;
-    creaturelist[1][1] = 0;
-
-    creaturelist[0][0] = 1;
-    creaturelist[0][1] = 0;
-
-    creaturelist[2][0] = 2;
-    creaturelist[2][1] = 0;
-
-    // creaturelist[0][0] = 0;
-    // creaturelist[0][1] = 0;
-
-    // creaturelist[1][0] = 1;
-    // creaturelist[1][1] = 0;
-
-    // creaturelist[2][0] = 2;
-    // creaturelist[2][1] = 1;
-
-    // creaturelist[3][0] = 1;
-    // creaturelist[3][1] = 2;
-
-    // creaturelist[4][0] = 2;
-    // creaturelist[4][1] = 1;
-
    	//Load creature info from stdin
-	// for (int cc = 0 ; cc < creaturect; cc++) {
+	for (int cc = 0 ; cc < creaturect; cc++) {
 
-	// 	printf("Creature#: %d\n", cc);
+		printf("Creature#: %d\n", cc);
 		
-	// 	printf("creature type: ");
-	// 	int type;
-	// 	scanf("%d", &type);
+		printf("creature type: ");
+		int type;
+		scanf("%d", &type);
 
-	// 	creaturelist[cc][0] = type;
+		creaturelist[cc][0] = type;
 
-	// 	printf("location: ");
-	// 	int loc;
-	// 	scanf("%d", &loc);
+		printf("location: ");
+		int loc;
+		scanf("%d", &loc);
 
-	// 	creaturelist[cc][1] = loc;
+		creaturelist[cc][1] = loc;
 
-	// 	roomlist[loc][5] = roomlist[loc][5] + 1;
-	// }
-
-
+		roomlist[loc][5] = roomlist[loc][5] + 1;
+	}
 
 	//Arrays loaded
-
+	//Start the game.
 
 
 	
@@ -582,25 +540,18 @@ int main(void){
  		}else{
  			printf("\n");
  		}
- 		printArrData(roomlist, creaturelist);
+ 		printf("\n");
+ 		//printArrData(roomlist, creaturelist);
+
+ 		if(respect >= 80){
+ 			printf("Congratulations! You Won!\nRespect Points: %d\n\n", respect);
+ 			break;
+		}
+		if(respect <= 0){
+			printf("Too Bad! You Lost!\nRespect Points: %d\n\n", respect);
+			break;
+ 		}
 	}
-
-
-
-
-
-
-
-	//move(0, 1, roomlist, creaturelist, roomct, creaturect);
-
-
-	// look(roomlist, creaturelist, roomct, creaturect);
-	// dirty(0, roomlist, creaturelist, roomct, creaturect);
-	//clean(0, roomlist, creaturelist, roomct, creaturect);
-
-	// look(roomlist, creaturelist, roomct, creaturect);
-
-	//printArrData(roomlist, creaturelist, roomct, creaturect);
 
 
 
