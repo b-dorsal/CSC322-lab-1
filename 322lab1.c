@@ -3,8 +3,20 @@
 #include <stdlib.h>
 #include <time.h>
 
-//roomlist = {0state, 1n, 2s, 3e, 4w, 5occupancy}
-//roomlist = {0type, 1room}
+
+/*
+	CSC-322 Lab 1
+	322lab1.c - Game project in C
+	Purpose: The project consists of building a small virtual world simulation that allows a human user to interact with
+			it through a text-based, command-line interface.
+ 
+	@author Brian Dorsey
+	@version 2/19/2017
+
+	Array column descriptions
+	roomlist = {0state, 1n, 2s, 3e, 4w, 5occupancy}
+	roomlist = {0type, 1room}
+*/
 
 int respect = 40;
 int creaturect = 0;
@@ -97,72 +109,11 @@ char* splitComm(char command[256]){
 //--------------------------------------------
 
 //Get the PC's ID
-int playerID(int** creaturelist){
-	int x;
-	for(x = 0; x < creaturect; x++){
-		if(creaturelist[x][0] == 0){
-			return x;
-		}
-	}
-	return x;
-}
-
-//Displays the room's information of the user.
-void look(int actor, int** roomlist, int** creaturelist){
-	//Find the current room using the creature list.
-	int currRoom = creaturelist[actor][1];
-
-
-	//Display the state of the current room.
-	printf("\nRoom %d, ", currRoom);
-	if(roomlist[currRoom][0] == 0){
-		printf("clean, ");
-	}else if(roomlist[currRoom][0] == 1){
-		printf("half-dirty, ");
-	}else {
-		printf("dirty, ");
-	}
-
-	//Display the neighbors of the current room.
-	printf("neighbors:");
-	if(roomlist[currRoom][1] != -1){
-		printf(" %d to the north,", roomlist[currRoom][1]);
-	}
-	if(roomlist[currRoom][2] != -1){
-		printf(" %d to the south,", roomlist[currRoom][2]);	
-	}
-	if(roomlist[currRoom][3] != -1){
-		printf(" %d to the east,", roomlist[currRoom][3]);	
-	}
-	if(roomlist[currRoom][4] != -1){
-		printf(" %d to the west,", roomlist[currRoom][4]);	
-	}
-
-	//Display the creatures in the current room.
-	printf(" contains:");
-	for(int x = 0; x < creaturect; x++){
-		if(creaturelist[x][1] == currRoom){
-			if(creaturelist[x][0] == 0){
-				//PC
-				printf("\nPC");
-			}else if(creaturelist[x][0] == 1){
-				//Animal
-				printf("\nAnimal %d", x);
-			}else{
-				//NPC
-				printf("\nHuman %d", x);
-			}
-		}
-	}
-	printf("\n\n");
-}
-
-//Returns the ID of the PC.
 int getPlayerID(int** creaturelist){
 	int x;
 	for(x = 0; x < creaturect; x++){
 		if(creaturelist[x][0] == 0){
-			break;
+			return x;
 		}
 	}
 	return x;
@@ -395,11 +346,62 @@ int move(int actor, int dir, int** roomlist, int** creaturelist){
 	}
 }
 
+
 //Return a random direction to move between [1, 4]
 int randomMove(){
 	srand(time(NULL));
 	int r = (rand() % 4) + 1;
 	return r;
+}
+
+//Displays the room's information of the user.
+void look(int actor, int** roomlist, int** creaturelist){
+	//Find the current room using the creature list.
+	int currRoom = creaturelist[actor][1];
+
+
+	//Display the state of the current room.
+	printf("\nRoom %d, ", currRoom);
+	if(roomlist[currRoom][0] == 0){
+		printf("clean, ");
+	}else if(roomlist[currRoom][0] == 1){
+		printf("half-dirty, ");
+	}else {
+		printf("dirty, ");
+	}
+
+	//Display the neighbors of the current room.
+	printf("neighbors:");
+	if(roomlist[currRoom][1] != -1){
+		printf(" %d to the north,", roomlist[currRoom][1]);
+	}
+	if(roomlist[currRoom][2] != -1){
+		printf(" %d to the south,", roomlist[currRoom][2]);	
+	}
+	if(roomlist[currRoom][3] != -1){
+		printf(" %d to the east,", roomlist[currRoom][3]);	
+	}
+	if(roomlist[currRoom][4] != -1){
+		printf(" %d to the west,", roomlist[currRoom][4]);	
+	}
+
+	//Display the creatures in the current room.
+	printf(" contains:");
+	for(int x = 0; x < creaturect; x++){
+		if(creaturelist[x][1] == currRoom){
+			if(creaturelist[x][0] == 0){
+				//PC
+				printf("\nPC");
+			}else if(creaturelist[x][0] == 1){
+				//Animal
+				printf("\nAnimal %d", x);
+			}else{
+				//NPC
+				printf("\nHuman %d", x);
+			}
+		}
+	}
+	printf("\n\n");
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -505,7 +507,7 @@ int main(void){
  			strcpy(command, comm);
  		}else{
 			strcpy(command, string);
-			actorID = playerID(creaturelist);
+			actorID = getPlayerID(creaturelist);
  		}
 
  		//printf("actor: %d action: %s\n", actorID, command);
